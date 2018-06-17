@@ -11,7 +11,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.toLatLngObj"
+        "onCommand:extension.toLatLngObj",
+        "onCommand:extension.wrapWithTryCatch"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -19,6 +20,10 @@
             {
                 "command": "extension.toLatLngObj",
                 "title": "code-productivity: convert to lat lng object"
+            },
+            {
+                "command": "extension.wrapWithTryCatch",
+                "title": "code-productivity: wrap with try and catch"
             }
         ]
     },

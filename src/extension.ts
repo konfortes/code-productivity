@@ -14,14 +14,33 @@ export function activate(context: vscode.ExtensionContext) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.toLatLngObj', () => {
+    let toLatLng = vscode.commands.registerCommand('extension.toLatLngObj', () => {
         // The code you place here will be executed every time your command is executed
-        
+
+        editSelection((editor, editBuilder, selection) => {
+            let coordsStr: String = editor.document.getText(selection);
+            let coordsArr: Array<String> = coordsStr.replace(" ", "").split(',');
+            let coordsObj = { lat: coordsArr[0], lng: coordsArr[1] };
+            editBuilder.replace(selection, JSON.stringify(coordsObj));
+        });
+
+    });
+
+    let wrapWithTryCatch = vscode.commands.registerCommand('extension.wrapWithTryCatch', () => {
+        editSelection((editor, editBuilder, selection) => {
+            let text: String = editor.document.getText(selection);
+
+            editBuilder.replace(selection, `try{\n  ${text}\n} catch(ex){\n}`);
+        });
+    });
+
+    function editSelection(editFn: (editor: vscode.TextEditor, editBuilder: vscode.TextEditorEdit, selection: vscode.Selection) => void) {
         let editor = vscode.window.activeTextEditor;
-        if(!editor){
+        if (!editor) {
             vscode.window.showErrorMessage("could not find an open editor");
             return;
         }
+
         editor.edit(editBuilder => {
             let selection: vscode.Selection = editor.selection;
             if (!selection) {
@@ -29,14 +48,12 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            let coordsStr: String = editor.document.getText(selection);
-            let coordsArr: Array<String> = coordsStr.replace(" ", "").split(',');
-            let coordsObj = {lat: coordsArr[0], lng: coordsArr[1]};
-            editBuilder.replace(selection, JSON.stringify(coordsObj));
+            editFn(editor, editBuilder, selection);
         });
-    });
+    }
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(toLatLng);
+    context.subscriptions.push(wrapWithTryCatch);
 }
 
 // this method is called when your extension is deactivated
