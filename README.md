@@ -1,1 +1,2 @@
-## vscode extension to turn lat,lng text to {lat:, lng:} object
+## vscode productivity extension 
+- _toLatLngObj_: converts lat,lng text to {lat:, lng:} object
